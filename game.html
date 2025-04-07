@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dubay Biznes O‘yini</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #d4af37;
+            font-size: 24px;
+        }
+        #coinDisplay {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+        #tapButton {
+            padding: 20px 40px;
+            font-size: 22px;
+            background-color: #d4af37;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+        }
+        #tapButton:hover {
+            background-color: #b8860b;
+        }
+        #energy {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dubay Biznes O‘yini</h1>
+    <p id="coinDisplay">Coinlar: 0</p>
+    <p id="energy">Energiya: 100/100</p>
+    <button id="tapButton">💰 Tap</button>
+
+    <script>
+        let coins = 0;
+        let energy = 100;
+        const maxEnergy = 100;
+
+        // Telegram Web App ma'lumotlarini olish
+        const user = window.Telegram.WebApp.initDataUnsafe.user;
+        const userId = user ? user.id : "test_user";  // Test uchun
+
+        // Tap funksiyasi
+        const tapButton = document.getElementById("tapButton");
+        tapButton.addEventListener("click", () => {
+            if (energy > 0) {
+                coins++;
+                energy--;
+                document.getElementById("coinDisplay").innerText = `Coinlar: ${coins}`;
+                document.getElementById("energy").innerText = `Energiya: ${energy}/${maxEnergy}`;
+                
+                // Botga ma'lumot yuborish
+                window.Telegram.WebApp.sendData(JSON.stringify({ userId: userId, coins: coins }));
+            } else {
+                alert("Energiyangiz tugadi! Kuting yoki bonus oling.");
+            }
+        });
+
+        // Energiya tiklanishi (masalan, har 10 soniyada 1 energiya)
+        setInterval(() => {
+            if (energy < maxEnergy) {
+                energy++;
+                document.getElementById("energy").innerText = `Energiya: ${energy}/${maxEnergy}`;
+            }
+        }, 10000); // 10 soniya
+
+        // Telegram Web App ni ishga tushirish
+        window.Telegram.WebApp.ready();
+    </script>
+</body>
+</html>
